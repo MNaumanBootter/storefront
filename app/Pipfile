@@ -4,10 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django-debug-toolbar = "*"
+django = "*"
 
 [dev-packages]
-django = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.10"
