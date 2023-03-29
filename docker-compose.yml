@@ -6,8 +6,44 @@ services:
       context: .
     image: storefront
     ports:
-      - "8002:8000"
+      - "${APP_PORT}:8000"
     volumes:
       - ./app:/app
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+
+  db:
+    image: mysql
+    restart: unless-stopped
+    container_name: storefront_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - dev-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p${DB_PASS} | grep 'mysqld is alive' || exit 1"]
+
+  adminer:
+    container_name: storefront_adminer
+    image: adminer
+    depends_on:
+      - db
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+
+volumes:
+  dev-db-data:
