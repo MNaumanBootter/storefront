@@ -19,6 +19,13 @@ class ProductAdmin(admin.ModelAdmin):
         else:
             return "OK"
 
+@admin.register(models.Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ("id", "customer", "payment_status", "placed_at")
+    list_per_page = 10
+    list_select_related = ("customer",)
+
+
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ("first_name", "last_name", "membership")
