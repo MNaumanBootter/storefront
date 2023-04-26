@@ -8,7 +8,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 10
     list_select_related = ("collection",)
 
-    @admin.display(ordering="inventory")
+    @admin.display(ordering="collection")
     def collection_title(self, product: models.Product) -> str:
         return product.collection.title
 
