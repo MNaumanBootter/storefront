@@ -5,14 +5,14 @@ from django.utils.html import format_html
 from django.utils.http import urlencode
 from django.urls import reverse
 
+
 class InventoryFilter(admin.SimpleListFilter):
     title = "inventory"
     parameter_name = "inventory"
 
     def lookups(self, request, model_admin):
-        return [
-            ("<10", "Low")
-        ]
+        return [("<10", "Low")]
+
     def queryset(self, request, queryset):
         if self.value() == "<10":
             return queryset.filter(inventory__lt=10)
@@ -47,8 +47,9 @@ class ProductAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f'{update_count} product(s) were successfully updated',
-            messages.SUCCESS
+            messages.SUCCESS,
         )
+
 
 class OrderItemInLine(admin.TabularInline):
     autocomplete_fields = ("product",)
@@ -56,6 +57,7 @@ class OrderItemInLine(admin.TabularInline):
     extra = 0
     min_num = 1
     max_num = 10
+
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -78,16 +80,16 @@ class CustomerAdmin(admin.ModelAdmin):
         url = (
             reverse("admin:store_order_changelist")
             + "?"
-            + urlencode({
-                "customer__id": str(customer.id),
-            })
+            + urlencode(
+                {
+                    "customer__id": str(customer.id),
+                }
             )
+        )
         return format_html("<a href='{}'> {}</a>", url, customer.orders_count)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(
-            orders_count=Count("order")
-        )
+        return super().get_queryset(request).annotate(orders_count=Count("order"))
 
 
 @admin.register(models.Collection)
@@ -101,13 +103,13 @@ class CollectionAdmin(admin.ModelAdmin):
         url = (
             reverse("admin:store_product_changelist")
             + "?"
-            + urlencode({
-                "collection__id": str(collection.id),
-            })
+            + urlencode(
+                {
+                    "collection__id": str(collection.id),
+                }
             )
+        )
         return format_html("<a href='{}'> {}</a>", url, collection.products_count)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).annotate(
-            products_count=Count("product")
-        )
+        return super().get_queryset(request).annotate(products_count=Count("product"))

@@ -16,8 +16,6 @@ class Migration(migrations.Migration):
             new_name='featured_product',
         ),
         migrations.RenameField(
-            model_name='orderitem',
-            old_name='qantity',
-            new_name='quantity',
+            model_name='orderitem', old_name='qantity', new_name='quantity',
         ),
     ]
