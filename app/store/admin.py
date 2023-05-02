@@ -28,6 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("collection", "last_update", InventoryFilter)
     list_per_page = 10
     list_select_related = ("collection",)
+    search_fields = ("title",)
 
     @admin.display(ordering="collection")
     def collection_title(self, product: models.Product) -> str:
@@ -49,9 +50,17 @@ class ProductAdmin(admin.ModelAdmin):
             messages.SUCCESS
         )
 
+class OrderItemInLine(admin.TabularInline):
+    autocomplete_fields = ("product",)
+    model = models.OrderItem
+    extra = 0
+    min_num = 1
+    max_num = 10
+
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ("customer",)
+    inlines = (OrderItemInLine,)
     list_display = ("id", "customer", "payment_status", "placed_at")
     list_per_page = 10
     list_select_related = ("customer",)
