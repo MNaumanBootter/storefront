@@ -51,6 +51,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    autocomplete_fields = ("customer",)
     list_display = ("id", "customer", "payment_status", "placed_at")
     list_per_page = 10
     list_select_related = ("customer",)
