@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'debug_toolbar',
     'store',
+    'store_custom',
     'tags',
     'likes',
 ]
