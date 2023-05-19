@@ -7,6 +7,7 @@ class CollectionSerializer(serializers.Serializer):
     class Meta:
         model = Collection
         fields = ("id", "title")
+
     # id = serializers.IntegerField()
     # title = serializers.CharField(max_length=255)
 
@@ -15,6 +16,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ("id", "title", "unit_price", "price_with_tax", "collection")
+
     # id = serializers.IntegerField()
     # title = serializers.CharField(max_length=255)
     # price = serializers.DecimalField(
@@ -33,3 +35,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def calculate_tax(self, product: Product):
         return product.unit_price * Decimal(1.1)
+
+    # def validate(self, data):
+    #     if data["password"] != data["confirm_password"]:
+    #         return serializers.ValidationError("Passwords do not match.")
+    #     return data
