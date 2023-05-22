@@ -41,5 +41,5 @@ class CollectionSerializer(serializers.ModelSerializer):
         method_name="calculate_products_count"
     )
 
-    def calculate_products_count(self, collection: Collection):
+    def calculate_products_count(self, collection: Collection) -> int:
         return collection.products.count()
