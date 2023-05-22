@@ -30,3 +30,16 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def calculate_tax(self, product: Product):
         return product.unit_price * Decimal(1.1)
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ("id", "title", "products_count")
+
+    products_count = serializers.SerializerMethodField(
+        method_name="calculate_products_count"
+    )
+
+    def calculate_products_count(self, collection: Collection):
+        return collection.products.count()
