@@ -2,3 +2,4 @@ django
 mysqlclient
 django-debug-toolbar
 djangorestframework
+drf-nested-routers
