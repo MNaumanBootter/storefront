@@ -5,6 +5,7 @@ from store import views
 router = routers.DefaultRouter()
 router.register("products", views.ProductViewSet, basename="product")
 router.register("collections", views.CollectionViewSet)
+router.register("carts", views.CartViewSet)
 
 
 products_router = routers.NestedDefaultRouter(router, "products", lookup="product")
