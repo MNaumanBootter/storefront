@@ -11,5 +11,7 @@ router.register("carts", views.CartViewSet)
 products_router = routers.NestedDefaultRouter(router, "products", lookup="product")
 products_router.register("reviews", views.ReviewViewSet, basename="product-reviews")
 
+cartitems_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
+cartitems_router.register("items", views.CartItemViewSet, basename="cart-items")
 
-urlpatterns = router.urls + products_router.urls
+urlpatterns = router.urls + products_router.urls + cartitems_router.urls
