@@ -1,36 +1,49 @@
+# builder image
 FROM python:3.10.10-alpine as builder
-
-WORKDIR /app
+LABEL maintainer="mnaumanbootter@gmail.com"
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-RUN python -m pip install --upgrade pip
-
-COPY ./app/requirements.txt .
-RUN apk add --no-cache gcc python3-dev musl-dev \
-    && apk add --no-cache mariadb-dev \
-    && pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt \
-    && apk del gcc musl-dev
-
+COPY ./app/requirements.txt /tmp/requirements.txt
 COPY ./app /app
+COPY ./scripts /scripts
+WORKDIR /app
 
+## building dependencies
+RUN python -m pip install --upgrade pip
+RUN apk add --update --no-cache gcc linux-headers python3-dev musl-dev
+RUN apk add --update --no-cache mariadb-dev
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r /tmp/requirements.txt
+RUN apk del gcc musl-dev
+RUN rm -rf /tmp
+
+
+# production image
 FROM python:3.10.10-alpine
 
 WORKDIR /app
 
 COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app .
+COPY --from=builder /scripts /scripts
 
-RUN apk add --no-cache mariadb-connector-c-dev
-
-RUN pip install --no-cache /wheels/* \
-    && rm -rf /root/.cache \
-    && find /usr/local/lib/python3.10 -name '__pycache__' | xargs rm -rf \
-    && find /usr/local/lib/python3.10 -name '*.pyc' -delete
-
-COPY --from=builder /app /app
+## installing dependencies
+RUN python -m venv /py && \
+    /py/bin/pip install --upgrade pip && \
+    apk add --no-cache mariadb-connector-c-dev && \
+    /py/bin/pip install --no-cache /wheels/* && \
+    rm -rf /root/.cache && \
+    find /usr/local/lib/python3.10 -name '__pycache__' | xargs rm -rf && \
+    find /usr/local/lib/python3.10 -name '*.pyc' -delete && \
+    rm -rf /wheels
 
 EXPOSE 8000
 
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+RUN adduser -u 5678 --disabled-password --no-create-home --gecos "" appuser && chmod -R +x /scripts
+
+ENV PATH="/scripts:/py/bin:$PATH"
+
 USER appuser
+
+CMD ["run.sh"]
