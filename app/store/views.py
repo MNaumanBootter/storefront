@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from store.pagination import DefaultPagination
 from store.models import (
     Product,
@@ -118,6 +119,11 @@ class CustomerViewSet(
 ):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+    def get_permissions(self):
+        if self.request.method == "GET" and self.action != "me":
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
     @action(detail=False, methods=["GET", "PUT"])
     def me(self, request):
