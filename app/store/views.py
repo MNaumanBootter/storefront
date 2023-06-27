@@ -4,14 +4,13 @@ from rest_framework.mixins import (
     CreateModelMixin,
     RetrieveModelMixin,
     DestroyModelMixin,
-    UpdateModelMixin,
 )
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from store.permissions import IsAdminOrReadOnly
+from rest_framework.permissions import IsAuthenticated
+from store.permissions import IsAdminOrReadOnly, FullDjangoModelPermissions
 from store.pagination import DefaultPagination
 from store.models import (
     Product,
@@ -117,7 +116,7 @@ class CartItemViewSet(ModelViewSet):
 class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [FullDjangoModelPermissions]
 
     @action(detail=False, methods=["GET", "PUT"], permission_classes=[IsAuthenticated])
     def me(self, request):
