@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from store.permissions import IsAdminOrReadOnly
 from store.pagination import DefaultPagination
 from store.models import (
@@ -114,21 +114,12 @@ class CartItemViewSet(ModelViewSet):
         return {"cart_id": self.kwargs["cart_pk"]}
 
 
-class CustomerViewSet(
-    CreateModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-    GenericViewSet,
-):
+class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    permission_classes = [IsAdminUser]
 
-    def get_permissions(self):
-        if self.request.method == "GET" and self.action != "me":
-            return [AllowAny()]
-        return [IsAuthenticated()]
-
-    @action(detail=False, methods=["GET", "PUT"])
+    @action(detail=False, methods=["GET", "PUT"], permission_classes=[IsAuthenticated])
     def me(self, request):
         (customer, created) = Customer.objects.get_or_create(user_id=request.user.id)
         if request.method == "GET":
