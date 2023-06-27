@@ -5,16 +5,16 @@ LABEL maintainer="mnaumanbootter@gmail.com"
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-COPY ./app/requirements.txt /tmp/requirements.txt
-COPY ./app /app
+COPY ./src/requirements.txt /tmp/requirements.txt
+COPY ./src /src
 COPY ./scripts /scripts
-WORKDIR /app
+WORKDIR /src
 
 ## building dependencies
 RUN python -m pip install --upgrade pip
 RUN apk add --update --no-cache gcc linux-headers python3-dev musl-dev
 RUN apk add --update --no-cache mariadb-dev
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r /tmp/requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /src/wheels -r /tmp/requirements.txt
 RUN apk del gcc musl-dev
 RUN rm -rf /tmp
 
@@ -22,10 +22,10 @@ RUN rm -rf /tmp
 # production image
 FROM python:3.10.10-alpine
 
-WORKDIR /app
+WORKDIR /src
 
-COPY --from=builder /app/wheels /wheels
-COPY --from=builder /app .
+COPY --from=builder /src/wheels /wheels
+COPY --from=builder /src .
 COPY --from=builder /scripts /scripts
 
 ## installing dependencies

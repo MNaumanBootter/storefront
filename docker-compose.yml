@@ -8,7 +8,7 @@ services:
     ports:
       - "${APP_PORT}:8000"
     volumes:
-      - ./app:/app
+      - ./src:/src
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     depends_on:
@@ -34,7 +34,11 @@ services:
     volumes:
       - dev-db-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -P 3306 -p${DB_PASS} | grep 'mysqld is alive' || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -P 3306 -p${DB_PASS} | grep 'mysqld is alive' || exit 1"
+        ]
 
   adminer:
     container_name: storefront_adminer
