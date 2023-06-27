@@ -1,8 +1,4 @@
-from rest_framework.permissions import (
-    BasePermission,
-    SAFE_METHODS,
-    DjangoModelPermissions,
-)
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAdminOrReadOnly(BasePermission):
@@ -14,8 +10,3 @@ class IsAdminOrReadOnly(BasePermission):
         return bool(
             request.method in SAFE_METHODS or request.user and request.user.is_staff
         )
-
-
-class FullDjangoModelPermissions(DjangoModelPermissions):
-    def __init__(self) -> None:
-        self.perms_map["GET"] = ['%(app_label)s.view_%(model_name)s']
