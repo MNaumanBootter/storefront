@@ -7,3 +7,4 @@ django-filter
 djoser
 djangorestframework_simplejwt
 uwsgi
+pillow
