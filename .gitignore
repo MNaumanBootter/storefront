@@ -130,3 +130,7 @@ dmypy.json
 
 # IDEA
 .idea/
+
+# media files
+/src/media/*
+!/src/media/.keep
