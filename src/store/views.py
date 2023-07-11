@@ -25,6 +25,7 @@ from store.models import (
 )
 from store.filters import ProductFilter
 from store.serializers import (
+    CreateOrderSerializer,
     OrderSerializer,
     ProductSerializer,
     CollectionSerializer,
@@ -143,8 +144,23 @@ class CustomerViewSet(ModelViewSet):
 
 
 class OrderViewSet(ModelViewSet):
-    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = CreateOrderSerializer(
+            data=request.data,
+            context={"user_id": self.request.user.id},
+        )
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        serializer = OrderSerializer(order)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CreateOrderSerializer
+        return OrderSerializer
 
     def get_queryset(self):
         user = self.request.user
