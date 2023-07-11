@@ -8,3 +8,4 @@ djoser
 djangorestframework_simplejwt
 uwsgi
 pillow
+django-cors-headers
