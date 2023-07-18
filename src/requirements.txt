@@ -9,3 +9,4 @@ djangorestframework_simplejwt
 uwsgi
 pillow
 django-cors-headers
+django-templated-mail

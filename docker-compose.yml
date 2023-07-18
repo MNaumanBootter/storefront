@@ -49,5 +49,11 @@ services:
     ports:
       - 8080:8080
 
+  smtp4dev:
+    image: rnwood/smtp4dev
+    ports:
+      - "3000:80"
+      - "2525:25"
+
 volumes:
   dev-db-data:

@@ -17,4 +17,11 @@ products_router.register("images", views.ProductImageViewSet, basename="product-
 cartitems_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
 cartitems_router.register("items", views.CartItemViewSet, basename="cart-items")
 
-urlpatterns = router.urls + products_router.urls + cartitems_router.urls
+urlpatterns = (
+    router.urls
+    + products_router.urls
+    + cartitems_router.urls
+    + [
+        path('email', views.email_test),
+    ]
+)
