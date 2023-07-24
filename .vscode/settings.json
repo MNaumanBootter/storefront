@@ -1,4 +1,11 @@
 {
     "editor.formatOnSave": true,
-    "python.analysis.autoSearchPaths": true
+    "python.analysis.autoSearchPaths": true,
+    "black-formatter.args": [
+        "--skip-string-normalization"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
 }

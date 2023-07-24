@@ -10,7 +10,7 @@ services:
     volumes:
       - ./src:/src
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -37,7 +37,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "mysqladmin ping -P 3306 -p${DB_PASS} | grep 'mysqld is alive' || exit 1"
+          "mysqladmin ping -P 3306 -p${DB_ROOT_PASS} | grep 'mysqld is alive' || exit 1"
         ]
 
   adminer:
