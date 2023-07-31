@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -186,3 +187,16 @@ ADMINS = [
     ("Admin1", "admin1@example.com"),
     ("Admin2", "admin2@example.com"),
 ]
+
+CELERY_BROKER_URL = (
+    f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}/1"
+)
+CELERY_BEAT_SCHEDULE = {
+    "email_customers": {
+        "task": "store.tasks.email_customers",
+        # "schedule": crontab(minute="*/1"),
+        "schedule": 5,
+        # "args": ["hello"],
+        # "kwargs": {"a": "a"},
+    }
+}

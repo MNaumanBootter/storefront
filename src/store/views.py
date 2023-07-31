@@ -1,6 +1,4 @@
-from django.core.mail import send_mail, mail_admins, BadHeaderError, EmailMessage
 from django.http import HttpResponse
-from templated_mail.mail import BaseEmailMessage
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -43,6 +41,7 @@ from store.serializers import (
     CustomerSerializer,
     UpdateOrderSerializer,
 )
+from store.tasks import email_customers
 
 
 class ProductViewSet(ModelViewSet):
@@ -196,29 +195,5 @@ class ProductImageViewSet(ModelViewSet):
 
 
 def email_test(request):
-    try:
-        send_mail(
-            "subject",
-            "message",
-            "from@example.com",
-            ["user@example.com"],
-            html_message="sup",
-        )
-        mail_admins(
-            "subject",
-            "message",
-            html_message="sup",
-        )
-        message = EmailMessage(
-            "subject", "message", "from@example.com", ["john@example.com"]
-        )
-        message.attach_file("store/static/store/styles.css")
-        message.send()
-        template_message = BaseEmailMessage(
-            template_name="emails/hello.html",
-            context={"name": "Name"},
-        )
-        template_message.send(["john@example.com"])
-    except BadHeaderError:
-        HttpResponse("Bad Header Error")
+    email_customers.delay()
     return HttpResponse("hello")

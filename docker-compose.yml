@@ -6,7 +6,7 @@ services:
       context: .
     image: storefront
     ports:
-      - "${APP_PORT}:8000"
+      - ${APP_PORT}:8000
     volumes:
       - ./src:/src
     command: >
@@ -19,6 +19,8 @@ services:
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
       DB_HOST: ${DB_HOST}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
 
   db:
     image: mysql
@@ -30,7 +32,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "${DB_PORT}:3306"
+      - ${DB_PORT}:3306
     volumes:
       - dev-db-data:/var/lib/mysql
     healthcheck:
@@ -52,8 +54,62 @@ services:
   smtp4dev:
     image: rnwood/smtp4dev
     ports:
-      - "3000:80"
-      - "2525:25"
+      - 3000:80
+      - 2525:25
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redisdata:/data
+
+  celery:
+    build: .
+    command: celery -A storefront worker --loglevel=info
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/src
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+  celery-beat:
+    build: .
+    command: celery -A storefront beat --loglevel=info -s /tmp/celerybeat-schedule
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/src
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+  flower:
+    build: .
+    command: celery -A storefront flower
+    depends_on:
+      - app
+      - redis
+      - celery
+    volumes:
+      - ./src:/src
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER=redis://${REDIS_HOST}:${REDIS_PORT}/1
+      - CELERY_BACKEND=redis://${REDIS_HOST}:${REDIS_PORT}/1
+    ports:
+      - 5555:5555
 
 volumes:
   dev-db-data:
+  redisdata:
