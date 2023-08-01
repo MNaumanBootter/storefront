@@ -36,6 +36,7 @@ services:
     volumes:
       - dev-db-data:/var/lib/mysql
     healthcheck:
+      interval: 5s
       test:
         [
           "CMD-SHELL",
