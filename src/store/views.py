@@ -1,12 +1,9 @@
-from django.http import HttpResponse
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import (
     CreateModelMixin,
     RetrieveModelMixin,
     DestroyModelMixin,
-    UpdateModelMixin,
 )
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -41,7 +38,6 @@ from store.serializers import (
     CustomerSerializer,
     UpdateOrderSerializer,
 )
-from store.tasks import email_customers
 
 
 class ProductViewSet(ModelViewSet):
@@ -192,8 +188,3 @@ class ProductImageViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {"product_id": self.kwargs["product_pk"]}
-
-
-def email_test(request):
-    email_customers.delay()
-    return HttpResponse("hello")

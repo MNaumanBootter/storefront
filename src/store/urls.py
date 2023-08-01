@@ -1,4 +1,3 @@
-from django.urls import path
 from rest_framework_nested import routers
 from store import views
 
@@ -17,11 +16,4 @@ products_router.register("images", views.ProductImageViewSet, basename="product-
 cartitems_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
 cartitems_router.register("items", views.CartItemViewSet, basename="cart-items")
 
-urlpatterns = (
-    router.urls
-    + products_router.urls
-    + cartitems_router.urls
-    + [
-        path('email', views.email_test),
-    ]
-)
+urlpatterns = router.urls + products_router.urls + cartitems_router.urls
