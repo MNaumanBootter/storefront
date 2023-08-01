@@ -13,3 +13,5 @@ django-templated-mail
 redis
 celery
 flower
+pytest
+pytest-django
