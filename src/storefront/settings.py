@@ -191,12 +191,13 @@ ADMINS = [
 CELERY_BROKER_URL = (
     f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}/1"
 )
-CELERY_BEAT_SCHEDULE = {
-    "email_customers": {
-        "task": "store.tasks.email_customers",
-        # "schedule": crontab(minute="*/1"),
-        "schedule": 5,
-        # "args": ["hello"],
-        # "kwargs": {"a": "a"},
-    }
-}
+
+# CELERY_BEAT_SCHEDULE = {
+#     "email_customers": {
+#         "task": "store.tasks.email_customers",
+#         # "schedule": crontab(minute="*/1"),
+#         "schedule": 5,
+#         # "args": ["hello"],
+#         # "kwargs": {"a": "a"},
+#     }
+# }
