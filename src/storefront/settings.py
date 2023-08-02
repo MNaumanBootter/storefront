@@ -100,6 +100,23 @@ DATABASES = {
     }
 }
 
+# Loading env vars from .env file for testing
+if os.environ.get("TEST_MODE") in [None, "", "true", "1"]:
+    from decouple import Config, RepositoryEnv
+
+    env_config = Config(RepositoryEnv('../.env'))
+
+    DATABASES = {
+        'default': {
+            "ENGINE": "django.db.backends.mysql",
+            "HOST": env_config.get("TEST_DB_HOST"),
+            "NAME": env_config.get("DB_NAME"),
+            "USER": env_config.get("TEST_DB_USER"),
+            "PASSWORD": env_config.get("DB_ROOT_PASS"),
+            "PORT": env_config.get("DB_PORT"),
+        }
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

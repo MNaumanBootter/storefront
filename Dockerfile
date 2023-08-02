@@ -2,9 +2,6 @@
 FROM python:3.10.10-alpine as builder
 LABEL maintainer="mnaumanbootter@gmail.com"
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
 COPY ./src/requirements.txt /tmp/requirements.txt
 COPY ./src /src
 COPY ./scripts /scripts
@@ -23,6 +20,10 @@ RUN rm -rf /tmp
 FROM python:3.10.10-alpine
 
 WORKDIR /src
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV TEST_MODE=0
 
 COPY --from=builder /src/wheels /wheels
 COPY --from=builder /src .
