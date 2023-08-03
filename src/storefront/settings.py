@@ -102,18 +102,16 @@ DATABASES = {
 
 # Loading env vars from .env file for testing
 if os.environ.get("TEST_MODE") in [None, "", "true", "1"]:
-    from decouple import Config, RepositoryEnv
-
-    env_config = Config(RepositoryEnv('../.env'))
+    from decouple import config
 
     DATABASES = {
         'default': {
             "ENGINE": "django.db.backends.mysql",
-            "HOST": env_config.get("TEST_DB_HOST"),
-            "NAME": env_config.get("DB_NAME"),
-            "USER": env_config.get("TEST_DB_USER"),
-            "PASSWORD": env_config.get("DB_ROOT_PASS"),
-            "PORT": env_config.get("DB_PORT"),
+            "HOST": config("TEST_DB_HOST"),
+            "NAME": config("DB_NAME"),
+            "USER": config("TEST_DB_USER"),
+            "PASSWORD": config("DB_ROOT_PASS"),
+            "PORT": config("DB_PORT"),
         }
     }
 
