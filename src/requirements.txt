@@ -16,3 +16,4 @@ flower
 pytest
 pytest-django
 pytest-watch
+model_bakery
