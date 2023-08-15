@@ -17,3 +17,4 @@ pytest
 pytest-django
 pytest-watch
 model_bakery
+# locust # for local performance testing
