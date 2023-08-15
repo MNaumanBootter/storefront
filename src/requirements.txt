@@ -18,4 +18,5 @@ pytest-django
 pytest-watch
 model_bakery
 django-silk
+django-redis
 # locust # for local performance testing
