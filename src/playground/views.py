@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from rest_framework.views import APIView
 from playground.tasks import email_customers
 import requests
 
@@ -19,3 +21,11 @@ def cache_test(request):
     # cache.set(key, data)
     # return HttpResponse(f"{cache.get(key)}")
     return HttpResponse(data)
+
+
+class CachTestView(APIView):
+    @method_decorator(cache_page(5 * 60))
+    def get(self, request):
+        response = requests.get("https://httpbin.org/delay/2")
+        data = response.json()
+        return HttpResponse(data)
