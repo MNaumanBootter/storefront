@@ -134,3 +134,6 @@ dmypy.json
 # media files
 /src/media/*
 !/src/media/.keep
+
+# static files
+/src/static/*
