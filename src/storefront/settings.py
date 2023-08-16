@@ -199,7 +199,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp4dev"
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
-EMAIL_HOST_PORT = 2525
+EMAIL_HOST_PORT = int(os.environ.get('SMTP4DEV_PORT'))
 DEFAULT_FOR_EMAIL = "from@example.com"
 
 ADMINS = [
