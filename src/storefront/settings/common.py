@@ -16,19 +16,11 @@ from datetime import timedelta
 from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+r0xtyf%n311!z4m60@fjl5(w(en1%chpczggp225^c#bc6kpi'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -65,9 +57,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-if DEBUG:
-    MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
-
 CORS_ALLOWED_ORIGINS = []
 
 ROOT_URLCONF = 'storefront.urls'
@@ -89,36 +78,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'storefront.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        "ENGINE": "django.db.backends.mysql",
-        "HOST": os.environ.get("DB_HOST"),
-        "NAME": os.environ.get("DB_NAME"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASS"),
-        "PORT": os.environ.get("DB_PORT"),
-    }
-}
-
-# Loading env vars from .env file for testing
-if os.environ.get("TEST_MODE") in [None, "", "true", "1"]:
-    from decouple import config
-
-    DATABASES = {
-        'default': {
-            "ENGINE": "django.db.backends.mysql",
-            "HOST": config("TEST_DB_HOST"),
-            "NAME": config("DB_NAME"),
-            "USER": config("TEST_DB_USER"),
-            "PASSWORD": config("DB_ROOT_PASS"),
-            "PORT": config("DB_PORT"),
-        }
-    }
 
 
 # Password validation
@@ -167,10 +126,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
-}
 
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
