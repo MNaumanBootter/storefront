@@ -19,4 +19,5 @@ pytest-watch
 model_bakery
 django-silk
 django-redis
+whitenoise
 # locust # for local performance testing
