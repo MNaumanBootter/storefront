@@ -4,11 +4,16 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from playground.tasks import email_customers
+import logging
 import requests
+
+
+logger = logging.getLogger(__name__)
 
 
 def email_test(request):
     email_customers.delay()
+    logger.info("Starting email sending process")
     return HttpResponse("hello")
 
 
