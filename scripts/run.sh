@@ -1,5 +1,10 @@
 #!/bin/sh
 
 set -e
+# Apply database migrations
+echo "Apply database migrations"
 python manage.py migrate
-uwsgi --socket :9000 --workers 4 --master --enable-threads --module src.wsgi
+
+# Start server
+echo "Starting server"
+gunicorn --bind 0.0.0.0:8000 --workers 3 storefront.wsgi

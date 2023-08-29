@@ -1,0 +1,134 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        DEV: false
+    image: storefront
+    ports:
+      - ${APP_PORT}:8000
+    volumes:
+      - ./src:/src
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      EMAIL_HOST_PORT: ${EMAIL_HOST_PORT}
+      DEFAULT_FOR_EMAIL: ${DEFAULT_FOR_EMAIL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      DJANGO_CACHE_URL: ${DJANGO_CACHE_URL}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+
+  db:
+    image: mysql
+    restart: always
+    container_name: storefront_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - dev-db-data:/var/lib/mysql
+    healthcheck:
+      interval: 5s
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -P 3306 -p${DB_ROOT_PASS} | grep 'mysqld is alive' || exit 1"
+        ]
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    restart: always
+    volumes:
+      - redisdata:/data
+
+  celery:
+    build:
+      context: .
+      args:
+        DEV: false
+    command: celery -A storefront worker --loglevel=info
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/src
+    restart: always
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      EMAIL_HOST_PORT: ${EMAIL_HOST_PORT}
+      DEFAULT_FOR_EMAIL: ${DEFAULT_FOR_EMAIL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      DJANGO_CACHE_URL: ${DJANGO_CACHE_URL}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+
+  celery-beat:
+    build:
+      context: .
+      args:
+        DEV: false
+    command: celery -A storefront beat --loglevel=info -s /tmp/celerybeat-schedule
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/src
+    restart: on-failure
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      EMAIL_HOST_PORT: ${EMAIL_HOST_PORT}
+      DEFAULT_FOR_EMAIL: ${DEFAULT_FOR_EMAIL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      DJANGO_CACHE_URL: ${DJANGO_CACHE_URL}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+
+  flower:
+    build:
+      context: .
+      args:
+        DEV: false
+    command: celery -A storefront flower
+    depends_on:
+      - app
+      - redis
+      - celery
+    restart: on-failure
+    volumes:
+      - ./src:/src
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      EMAIL_HOST_PORT: ${EMAIL_HOST_PORT}
+      DEFAULT_FOR_EMAIL: ${DEFAULT_FOR_EMAIL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      DJANGO_CACHE_URL: ${DJANGO_CACHE_URL}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+    ports:
+      - ${FLOWER_PORT}:5555
+
+volumes:
+  dev-db-data:
+  redisdata:

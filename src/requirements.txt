@@ -6,7 +6,7 @@ drf-nested-routers
 django-filter
 djoser
 djangorestframework_simplejwt
-uwsgi
+gunicorn
 pillow
 django-cors-headers
 django-templated-mail
@@ -16,3 +16,4 @@ flower
 django-redis
 whitenoise
 dj-database-url
+django-silk
