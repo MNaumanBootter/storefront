@@ -2,8 +2,6 @@ from .common import *
 
 DEBUG = True
 
-SECRET_KEY = 'django-insecure-+r0xtyf%n311!z4m60@fjl5(w(en1%chpczggp225^c#bc6kpi'
-
 MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
 
 # Database
@@ -23,7 +21,6 @@ DATABASES = {
 # Loading env vars from .env file for testing
 if os.environ.get("TEST_MODE") in [None, "", "true", "1"]:
     from decouple import config
-
     DATABASES = {
         'default': {
             "ENGINE": "django.db.backends.mysql",
