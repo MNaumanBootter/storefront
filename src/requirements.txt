@@ -13,11 +13,6 @@ django-templated-mail
 redis
 celery
 flower
-pytest
-pytest-django
-pytest-watch
-model_bakery
-django-silk
 django-redis
 whitenoise
 # locust # for local performance testing

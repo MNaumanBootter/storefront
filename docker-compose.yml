@@ -4,6 +4,8 @@ services:
   app:
     build:
       context: .
+      args:
+        DEV: true
     image: storefront
     restart: no
     ports:
@@ -75,7 +77,10 @@ services:
       - redisdata:/data
 
   celery:
-    build: .
+    build:
+      context: .
+      args:
+        DEV: true
     command: celery -A storefront worker --loglevel=info
     depends_on:
       - redis
@@ -97,7 +102,10 @@ services:
       DJANGO_CACHE_URL: ${DJANGO_CACHE_URL}
 
   celery-beat:
-    build: .
+    build:
+      context: .
+      args:
+        DEV: true
     command: celery -A storefront beat --loglevel=info -s /tmp/celerybeat-schedule
     depends_on:
       - redis
@@ -119,7 +127,10 @@ services:
       DJANGO_CACHE_URL: ${DJANGO_CACHE_URL}
 
   flower:
-    build: .
+    build:
+      context: .
+      args:
+        DEV: true
     command: celery -A storefront flower
     depends_on:
       - app

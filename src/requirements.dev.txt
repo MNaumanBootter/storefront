@@ -1,0 +1,6 @@
+pytest
+pytest-django
+pytest-watch
+model_bakery
+django-silk
+# locust # for local performance testing

@@ -2,7 +2,10 @@
 FROM python:3.10.10-alpine as builder
 LABEL maintainer="mnaumanbootter@gmail.com"
 
-## building dependencies
+# this argument will be used to install development requirements
+ARG DEV=false
+
+# building dependencies
 RUN python -m pip install --upgrade pip
 RUN apk add --update --no-cache gcc linux-headers python3-dev musl-dev
 RUN apk add --update --no-cache mariadb-dev
@@ -11,7 +14,11 @@ WORKDIR /src
 
 # preparing pip wheels
 COPY ./src/requirements.txt /tmp/requirements.txt
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /src/wheels -r /tmp/requirements.txt
+COPY ./src/requirements.dev.txt /tmp/requirements.dev.txt
+RUN if [ $DEV == "true" ]; \
+    then pip wheel --no-cache-dir --no-deps --wheel-dir /src/wheels -r /tmp/requirements.dev.txt; \
+    fi && \
+    pip wheel --no-cache-dir --no-deps --wheel-dir /src/wheels -r /tmp/requirements.txt
 
 RUN apk del gcc musl-dev
 RUN rm -rf /tmp
