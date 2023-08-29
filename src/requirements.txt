@@ -15,4 +15,4 @@ celery
 flower
 django-redis
 whitenoise
-# locust # for local performance testing
+dj-database-url
